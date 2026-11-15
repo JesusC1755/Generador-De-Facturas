@@ -4,6 +4,7 @@ import {
   calcularTotalesFactura,
   formatearMoneda,
 } from '../src/utils/moneda';
+import { reajustarMontosPorCambioDivisa } from '../src/utils/conversionDivisa';
 import { ItemFactura } from '../src/types/factura';
 
 function asegurar(condicion: boolean, mensaje: string) {
@@ -65,5 +66,22 @@ const formatoCop = formatearMoneda(150000, 'COP');
 console.log(`USD Formateado: ${formatoUsd}`);
 console.log(`COP Formateado: ${formatoCop}`);
 asegurar(formatoUsd.includes('232.05') || formatoUsd.includes('232,05'), 'Formato USD debe contener 232.05');
+
+console.log('\n--- TEST 5: Re-escalado Seguro USD <-> COP ---');
+const itemsUsd: ItemFactura[] = [
+  {
+    id: '1',
+    descripcion: 'Consultoría',
+    cantidad: 1,
+    montoUnitario: 5000, // $50.00 USD (factor 100)
+    tasaImpuestoBps: 1900,
+    tasaDescuentoBps: 0,
+  },
+];
+const itemsCop = reajustarMontosPorCambioDivisa(itemsUsd, 'USD', 'COP');
+asegurar(itemsCop[0]?.montoUnitario === 50, 'Al pasar $50.00 USD a COP debe resultar 50 COP (no 5000)');
+
+const itemsVueltaUsd = reajustarMontosPorCambioDivisa(itemsCop, 'COP', 'USD');
+asegurar(itemsVueltaUsd[0]?.montoUnitario === 5000, 'Al regresar de 50 COP a USD debe volver a 5000 centavos');
 
 console.log('\n✨ ¡TODAS LAS PRUEBAS DE PRECISIÓN FINANCIERA PASARON CON ÉXITO! ✨');

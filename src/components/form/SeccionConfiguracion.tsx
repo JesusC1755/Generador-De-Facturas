@@ -1,7 +1,8 @@
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { DatosFactura } from '../../types/factura';
-import { DIVISAS_SOPORTADAS } from '../../types/divisa';
+import { CodigoDivisa, DIVISAS_SOPORTADAS } from '../../types/divisa';
+import { reajustarMontosPorCambioDivisa } from '../../utils/conversionDivisa';
 import { Sliders, Palette, Coins, FileCheck } from 'lucide-react';
 
 interface PropiedadesSeccionConfiguracion {
@@ -22,6 +23,23 @@ export const SeccionConfiguracion: React.FC<PropiedadesSeccionConfiguracion> = (
 }) => {
   const { register, watch, setValue } = formulario;
   const colorActual = watch('configuracion.colorPrimario');
+  const divisaActual = watch('configuracion.divisa');
+
+  const manejarCambioDivisa = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const nuevaDivisa = e.target.value as CodigoDivisa;
+    const itemsActuales = watch('items') || [];
+
+    if (divisaActual !== nuevaDivisa) {
+      // Re-escalar montos unitarios para preservar el valor nominal del usuario sin distorsión 100x
+      const itemsReescalados = reajustarMontosPorCambioDivisa(
+        itemsActuales,
+        divisaActual,
+        nuevaDivisa
+      );
+      setValue('items', itemsReescalados, { shouldDirty: true });
+      setValue('configuracion.divisa', nuevaDivisa, { shouldDirty: true });
+    }
+  };
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
@@ -48,7 +66,7 @@ export const SeccionConfiguracion: React.FC<PropiedadesSeccionConfiguracion> = (
           </select>
         </div>
 
-        {/* Divisa */}
+        {/* Divisa con re-escalado seguro */}
         <div className="space-y-1">
           <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-700">
             <Coins className="h-3.5 w-3.5 text-slate-400" />
@@ -56,7 +74,8 @@ export const SeccionConfiguracion: React.FC<PropiedadesSeccionConfiguracion> = (
           </label>
           <select
             className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            {...register('configuracion.divisa')}
+            value={divisaActual}
+            onChange={manejarCambioDivisa}
           >
             {Object.values(DIVISAS_SOPORTADAS).map((divisa) => (
               <option key={divisa.codigo} value={divisa.codigo}>
@@ -73,7 +92,7 @@ export const SeccionConfiguracion: React.FC<PropiedadesSeccionConfiguracion> = (
             Plantilla A4
           </label>
           <select
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium"
             {...register('configuracion.plantilla')}
           >
             <option value="moderna">Moderna (B2B Tech)</option>
@@ -121,4 +140,3 @@ export const SeccionConfiguracion: React.FC<PropiedadesSeccionConfiguracion> = (
     </div>
   );
 };
-

@@ -3,6 +3,8 @@ import { useReactToPrint } from 'react-to-print';
 import { DatosFactura } from '../../types/factura';
 import { usarCalculosFactura } from '../../hooks/usarCalculosFactura';
 import { PlantillaModerna } from '../templates/PlantillaModerna';
+import { PlantillaMinimalista } from '../templates/PlantillaMinimalista';
+import { PlantillaClasica } from '../templates/PlantillaClasica';
 import { Boton } from '../ui/Boton';
 import {
   Printer,
@@ -20,7 +22,7 @@ export const ContenedorA4: React.FC<PropiedadesContenedorA4> = ({ factura }) => 
   const calculos = usarCalculosFactura(factura.items, factura.configuracion.divisa);
   const elementoImpresionRef = useRef<HTMLDivElement>(null);
 
-  // Nivel de zoom (1 = 100%, 0.8 = 80%, etc.)
+  // Nivel de zoom (1 = 100%, 0.85 = 85%, etc.)
   const [escala, setEscala] = useState<number>(0.85);
 
   const manejarImprimir = useReactToPrint({
@@ -32,6 +34,18 @@ export const ContenedorA4: React.FC<PropiedadesContenedorA4> = ({ factura }) => 
   const disminuirZoom = () => setEscala((prev) => Math.max(prev - 0.1, 0.4));
   const restablecerZoom = () => setEscala(0.85);
   const ajustarPantalla = () => setEscala(0.7);
+
+  const renderizarPlantilla = () => {
+    switch (factura.configuracion.plantilla) {
+      case 'minimalista':
+        return <PlantillaMinimalista factura={factura} calculos={calculos} />;
+      case 'clasica':
+        return <PlantillaClasica factura={factura} calculos={calculos} />;
+      case 'moderna':
+      default:
+        return <PlantillaModerna factura={factura} calculos={calculos} />;
+    }
+  };
 
   return (
     <div className="flex flex-col h-full space-y-4">
@@ -109,12 +123,10 @@ export const ContenedorA4: React.FC<PropiedadesContenedorA4> = ({ factura }) => 
         >
           {/* Nodo físico para impresión */}
           <div ref={elementoImpresionRef}>
-            {/* Renderizado de la plantilla activa */}
-            <PlantillaModerna factura={factura} calculos={calculos} />
+            {renderizarPlantilla()}
           </div>
         </div>
       </div>
     </div>
   );
 };
-

@@ -13,6 +13,11 @@ import {
   descargarJsonFactura,
   leerArchivoComoTexto,
 } from '../../utils/archivo';
+import {
+  FACTURA_EJEMPLO_SAAS,
+  FACTURA_EJEMPLO_COLOMBIA,
+  COTIZACION_EJEMPLO_DISENO,
+} from '../../utils/datosPrueba';
 import { Download, Upload, RotateCcw, Check, AlertCircle } from 'lucide-react';
 
 interface PropiedadesFormularioFactura {
@@ -43,7 +48,7 @@ export const FormularioFactura: React.FC<PropiedadesFormularioFactura> = ({
 
   const { watch, reset } = formulario;
 
-  // Sincronizar si el store cambia externamente (ej: al cargar JSON)
+  // Sincronizar si el store cambia externamente (ej: al cargar JSON o ejemplo)
   useEffect(() => {
     reset(facturaAlmacen);
   }, [facturaAlmacen, reset]);
@@ -128,11 +133,42 @@ export const FormularioFactura: React.FC<PropiedadesFormularioFactura> = ({
     }
   };
 
+  const cargarEjemploPrueba = (ejemplo: DatosFactura, nombre: string) => {
+    restablecerFacturaStore(ejemplo);
+    setMensajeEstado({
+      tipo: 'exito',
+      texto: `Ejemplo cargado: ${nombre}`,
+    });
+    setTimeout(() => setMensajeEstado(null), 3000);
+  };
+
   return (
     <div className="space-y-6">
-      {/* Barra de Acciones de Portabilidad */}
+      {/* Barra de Acciones de Portabilidad y Ejemplos Rápidos */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Selector de Mock Invoices para demostraciones */}
+          <div className="relative inline-flex items-center">
+            <select
+              defaultValue=""
+              onChange={(e) => {
+                const valor = e.target.value;
+                if (valor === 'saas') cargarEjemploPrueba(FACTURA_EJEMPLO_SAAS, 'SaaS Cloud B2B (USD)');
+                else if (valor === 'colombia') cargarEjemploPrueba(FACTURA_EJEMPLO_COLOMBIA, 'Factura Comercial (COP)');
+                else if (valor === 'diseno') cargarEjemploPrueba(COTIZACION_EJEMPLO_DISENO, 'Cotización Branding (EUR)');
+                e.target.value = '';
+              }}
+              className="h-8 rounded-lg border border-blue-200 bg-blue-50/50 px-2.5 text-xs font-semibold text-blue-700 shadow-sm transition-colors hover:bg-blue-100 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+            >
+              <option value="" disabled>
+                ⚡ Cargar Datos de Prueba (Mock)...
+              </option>
+              <option value="saas">SaaS Cloud B2B (USD • Moderna)</option>
+              <option value="colombia">Factura Comercial (COP • Clásica)</option>
+              <option value="diseno">Cotización Branding (EUR • Minimalista)</option>
+            </select>
+          </div>
+
           <Boton
             type="button"
             variante="esquema"
@@ -173,7 +209,7 @@ export const FormularioFactura: React.FC<PropiedadesFormularioFactura> = ({
           title="Restablecer todos los campos al borrador por defecto"
         >
           <RotateCcw className="h-3.5 w-3.5" />
-          Restablecer Borrador
+          Restablecer
         </Boton>
       </div>
 
@@ -206,4 +242,3 @@ export const FormularioFactura: React.FC<PropiedadesFormularioFactura> = ({
     </div>
   );
 };
-

@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --fondo: 0 0% 100%;
+    --primer-plano: 222.2 84% 4.9%;
+    --tarjeta: 0 0% 100%;
+    --tarjeta-primer-plano: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-primer-plano: 222.2 84% 4.9%;
+    --primario: 221.2 83.2% 53.3%;
+    --primario-primer-plano: 210 40% 98%;
+    --secundario: 210 40% 96.1%;
+    --secundario-primer-plano: 222.2 47.4% 11.2%;
+    --apagado: 210 40% 96.1%;
+    --apagado-primer-plano: 215.4 16.3% 46.9%;
+    --acento: 210 40% 96.1%;
+    --acento-primer-plano: 222.2 47.4% 11.2%;
+    --destructivo: 0 84.2% 60.2%;
+    --destructivo-primer-plano: 210 40% 98%;
+    --borde: 214.3 31.8% 91.4%;
+    --entrada: 214.3 31.8% 91.4%;
+    --anillo: 221.2 83.2% 53.3%;
+    --radio: 0.5rem;
+  }
+}
+
+/* Reglas globales de impresión A4 */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Ocultar elementos de UI interactiva al imprimir */
+  .no-imprimir {
+    display: none !important;
+  }
+
+  /* Evitar cortes antiestéticos en filas y totales */
+  .evitar-salto-pagina {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
+

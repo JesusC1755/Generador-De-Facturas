@@ -75,7 +75,7 @@ export const SeccionEmisor: React.FC<PropiedadesSeccionEmisor> = ({ formulario }
       {/* Zona de Carga de Logo */}
       <div className="space-y-2">
         <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
-          Logo Corporativo (Máx 800 KB)
+          Logo Corporativo (Máx 1.5 MB)
         </label>
 
         {logoUrl ? (

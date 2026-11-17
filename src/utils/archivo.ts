@@ -1,10 +1,10 @@
 import { DatosFactura } from '../types/factura';
 
 /**
- * Límite estricto de tamaño para el logo (800 KB).
- * Protege la cuota máxima de ~5MB de LocalStorage contra QuotaExceededError.
+ * Límite seguro de tamaño para el logo (1.5 MB).
+ * Protege la cuota de ~5MB de LocalStorage contra QuotaExceededError permitiendo imágenes de alta calidad.
  */
-export const LIMITE_LOGO_BYTES = 800 * 1024; // 819,200 bytes
+export const LIMITE_LOGO_BYTES = Math.round(1.5 * 1024 * 1024); // 1,572,864 bytes
 
 const TIPOS_IMAGEN_PERMITIDOS = [
   'image/png',
@@ -34,10 +34,10 @@ export function procesarArchivoLogo(
     }
 
     if (archivo.size > LIMITE_LOGO_BYTES) {
-      const tamanoKb = (archivo.size / 1024).toFixed(1);
+      const tamanoMb = (archivo.size / (1024 * 1024)).toFixed(2);
       resolve({
         exito: false,
-        error: `El archivo supera el límite de 800 KB (${tamanoKb} KB). Reduce su tamaño para proteger el almacenamiento local.`,
+        error: `El archivo supera el límite de 1.5 MB (${tamanoMb} MB). Reduce su resolución para proteger el almacenamiento local.`,
       });
       return;
     }

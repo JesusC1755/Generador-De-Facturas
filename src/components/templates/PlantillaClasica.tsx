@@ -30,11 +30,13 @@ export const PlantillaClasica: React.FC<PropiedadesPlantillaClasica> = ({
               />
             ) : null}
             <h1 className="text-xl font-bold uppercase tracking-wide text-slate-900">
-              {emisor.nombre}
+              {emisor.nombre || 'Nombre de la Empresa'}
             </h1>
-            <p className="font-mono text-xs font-semibold text-slate-700">
-              {emisor.identificacionFiscal}
-            </p>
+            {emisor.identificacionFiscal && (
+              <p className="font-mono text-xs font-semibold text-slate-700">
+                {emisor.identificacionFiscal}
+              </p>
+            )}
             <div className="text-slate-600 text-[11px] space-y-0.5 font-sans">
               {emisor.direccion && <p>{emisor.direccion}</p>}
               {(emisor.ciudad || emisor.pais) && (
@@ -80,8 +82,10 @@ export const PlantillaClasica: React.FC<PropiedadesPlantillaClasica> = ({
             <span className="block font-bold text-[10px] uppercase tracking-wider text-slate-500 mb-1 border-b border-slate-200 pb-0.5">
               Empresa Emisora
             </span>
-            <p className="font-bold text-slate-900">{emisor.nombre}</p>
-            <p className="font-mono text-slate-700">{emisor.identificacionFiscal}</p>
+            <p className="font-bold text-slate-900">{emisor.nombre || 'Empresa Emisora'}</p>
+            {emisor.identificacionFiscal && (
+              <p className="font-mono text-slate-700">{emisor.identificacionFiscal}</p>
+            )}
             <p className="text-slate-600 text-[11px] mt-1">{emisor.direccion}</p>
           </div>
 

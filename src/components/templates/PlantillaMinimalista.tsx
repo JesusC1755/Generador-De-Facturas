@@ -33,14 +33,16 @@ export const PlantillaMinimalista: React.FC<PropiedadesPlantillaMinimalista> = (
                 className="text-2xl font-light tracking-tight"
                 style={{ color: colorAcento }}
               >
-                {emisor.nombre}
+                {emisor.nombre || 'Nombre de la Empresa'}
               </h1>
             )}
 
             <div className="text-xs text-slate-500 space-y-0.5">
-              <p className="font-mono text-slate-700 font-medium">
-                {emisor.identificacionFiscal}
-              </p>
+              {emisor.identificacionFiscal && (
+                <p className="font-mono text-slate-700 font-medium">
+                  {emisor.identificacionFiscal}
+                </p>
+              )}
               {emisor.direccion && <p>{emisor.direccion}</p>}
               {(emisor.ciudad || emisor.pais) && (
                 <p>{[emisor.ciudad, emisor.pais].filter(Boolean).join(', ')}</p>

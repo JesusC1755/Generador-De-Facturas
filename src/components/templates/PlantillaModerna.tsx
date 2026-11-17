@@ -39,11 +39,13 @@ export const PlantillaModerna: React.FC<PropiedadesPlantillaModerna> = ({
             )}
             <div>
               <h2 className="text-lg font-bold text-slate-900 leading-tight">
-                {emisor.nombre}
+                {emisor.nombre || 'Nombre de la Empresa'}
               </h2>
-              <p className="text-xs font-semibold text-slate-600 font-mono">
-                {emisor.identificacionFiscal}
-              </p>
+              {emisor.identificacionFiscal && (
+                <p className="text-xs font-semibold text-slate-600 font-mono">
+                  {emisor.identificacionFiscal}
+                </p>
+              )}
             </div>
             <div className="text-xs text-slate-500 space-y-0.5">
               {emisor.direccion && <p>{emisor.direccion}</p>}

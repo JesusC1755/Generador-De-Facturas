@@ -2,6 +2,9 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { DatosFactura } from '../../types/factura';
 import { EntradaTexto } from '../ui/EntradaTexto';
+import { EntradaAutocompletado } from '../ui/EntradaAutocompletado';
+import { EntradaTelefono } from '../ui/EntradaTelefono';
+import { LISTA_PAISES, obtenerCiudadesDePais } from '../../utils/paises';
 import { UserCheck } from 'lucide-react';
 
 interface PropiedadesSeccionReceptor {
@@ -11,8 +14,25 @@ interface PropiedadesSeccionReceptor {
 export const SeccionReceptor: React.FC<PropiedadesSeccionReceptor> = ({ formulario }) => {
   const {
     register,
+    setValue,
+    watch,
     formState: { errors },
   } = formulario;
+
+  const paisActual = watch('receptor.pais') || '';
+  const ciudadActual = watch('receptor.ciudad') || '';
+  const telefonoActual = watch('receptor.telefono') || '';
+
+  // Opciones de países para el autocompletado
+  const opcionesPaises = LISTA_PAISES.map((p) => ({
+    valor: p.nombre,
+    etiqueta: p.nombre,
+    icono: p.bandera,
+    subtitulo: p.prefijo,
+  }));
+
+  // Ciudades sugeridas dinámicas basadas en el país seleccionado
+  const ciudadesSugeridas = obtenerCiudadesDePais(paisActual);
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
@@ -43,10 +63,13 @@ export const SeccionReceptor: React.FC<PropiedadesSeccionReceptor> = ({ formular
           error={errors.receptor?.correo?.message}
           {...register('receptor.correo')}
         />
-        <EntradaTexto
+        {/* Selector de teléfono con prefijo internacional */}
+        <EntradaTelefono
           etiqueta="Teléfono"
-          placeholder="+1 (555) 000-0000"
-          {...register('receptor.telefono')}
+          valor={telefonoActual}
+          alCambiar={(val) => setValue('receptor.telefono', val, { shouldDirty: true })}
+          paisSugerido={paisActual}
+          placeholder="555 000 0000"
         />
         <div className="sm:col-span-2">
           <EntradaTexto
@@ -55,15 +78,23 @@ export const SeccionReceptor: React.FC<PropiedadesSeccionReceptor> = ({ formular
             {...register('receptor.direccion')}
           />
         </div>
-        <EntradaTexto
+        {/* Selector de Ciudad con autocompletado y sugerencias */}
+        <EntradaAutocompletado
           etiqueta="Ciudad"
-          placeholder="Ciudad"
-          {...register('receptor.ciudad')}
+          valor={ciudadActual}
+          alCambiar={(val) => setValue('receptor.ciudad', val, { shouldDirty: true })}
+          opciones={ciudadesSugeridas}
+          placeholder="Buscar o escribir ciudad..."
         />
-        <EntradaTexto
+        {/* Selector de País con autocompletado y banderas */}
+        <EntradaAutocompletado
           etiqueta="País"
-          placeholder="País"
-          {...register('receptor.pais')}
+          valor={paisActual}
+          alCambiar={(val) => {
+            setValue('receptor.pais', val, { shouldDirty: true });
+          }}
+          opciones={opcionesPaises}
+          placeholder="Buscar o seleccionar país..."
         />
       </div>
     </div>

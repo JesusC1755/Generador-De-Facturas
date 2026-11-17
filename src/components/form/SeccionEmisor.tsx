@@ -2,8 +2,11 @@ import React, { useRef, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { DatosFactura } from '../../types/factura';
 import { EntradaTexto } from '../ui/EntradaTexto';
+import { EntradaAutocompletado } from '../ui/EntradaAutocompletado';
+import { EntradaTelefono } from '../ui/EntradaTelefono';
 import { Boton } from '../ui/Boton';
 import { procesarArchivoLogo } from '../../utils/archivo';
+import { LISTA_PAISES, obtenerCiudadesDePais } from '../../utils/paises';
 import { UploadCloud, X, Building2, AlertCircle } from 'lucide-react';
 
 interface PropiedadesSeccionEmisor {
@@ -19,8 +22,23 @@ export const SeccionEmisor: React.FC<PropiedadesSeccionEmisor> = ({ formulario }
   } = formulario;
 
   const logoUrl = watch('emisor.logoUrl');
+  const paisActual = watch('emisor.pais') || '';
+  const ciudadActual = watch('emisor.ciudad') || '';
+  const telefonoActual = watch('emisor.telefono') || '';
+
   const [errorLogo, setErrorLogo] = useState<string | null>(null);
   const inputArchivoRef = useRef<HTMLInputElement>(null);
+
+  // Opciones de países para el autocompletado
+  const opcionesPaises = LISTA_PAISES.map((p) => ({
+    valor: p.nombre,
+    etiqueta: p.nombre,
+    icono: p.bandera,
+    subtitulo: p.prefijo,
+  }));
+
+  // Ciudades sugeridas dinámicas basadas en el país seleccionado
+  const ciudadesSugeridas = obtenerCiudadesDePais(paisActual);
 
   const manejarSubidaLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const archivo = e.target.files?.[0];
@@ -35,7 +53,6 @@ export const SeccionEmisor: React.FC<PropiedadesSeccionEmisor> = ({ formulario }
       setErrorLogo(resultado.error);
     }
 
-    // Resetear valor para permitir re-selección del mismo archivo
     if (inputArchivoRef.current) {
       inputArchivoRef.current.value = '';
     }
@@ -131,10 +148,13 @@ export const SeccionEmisor: React.FC<PropiedadesSeccionEmisor> = ({ formulario }
           error={errors.emisor?.correo?.message}
           {...register('emisor.correo')}
         />
-        <EntradaTexto
+        {/* Selector de teléfono con prefijo internacional */}
+        <EntradaTelefono
           etiqueta="Teléfono de Contacto"
-          placeholder="+57 (300) 123-4567"
-          {...register('emisor.telefono')}
+          valor={telefonoActual}
+          alCambiar={(val) => setValue('emisor.telefono', val, { shouldDirty: true })}
+          paisSugerido={paisActual}
+          placeholder="300 123 4567"
         />
         <div className="sm:col-span-2">
           <EntradaTexto
@@ -143,15 +163,23 @@ export const SeccionEmisor: React.FC<PropiedadesSeccionEmisor> = ({ formulario }
             {...register('emisor.direccion')}
           />
         </div>
-        <EntradaTexto
+        {/* Selector de Ciudad con autocompletado y sugerencias */}
+        <EntradaAutocompletado
           etiqueta="Ciudad"
-          placeholder="Bogotá / Madrid / San Francisco"
-          {...register('emisor.ciudad')}
+          valor={ciudadActual}
+          alCambiar={(val) => setValue('emisor.ciudad', val, { shouldDirty: true })}
+          opciones={ciudadesSugeridas}
+          placeholder="Buscar o escribir ciudad..."
         />
-        <EntradaTexto
+        {/* Selector de País con autocompletado y banderas */}
+        <EntradaAutocompletado
           etiqueta="País"
-          placeholder="Colombia / España / EE.UU."
-          {...register('emisor.pais')}
+          valor={paisActual}
+          alCambiar={(val) => {
+            setValue('emisor.pais', val, { shouldDirty: true });
+          }}
+          opciones={opcionesPaises}
+          placeholder="Buscar o seleccionar país..."
         />
       </div>
     </div>

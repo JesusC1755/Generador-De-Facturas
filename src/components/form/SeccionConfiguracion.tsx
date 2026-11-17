@@ -50,10 +50,10 @@ export const SeccionConfiguracion: React.FC<PropiedadesSeccionConfiguracion> = (
         </h3>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Tipo de Documento */}
-        <div className="space-y-1">
-          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-700">
+        <div className="space-y-1.5">
+          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-700 whitespace-nowrap">
             <FileCheck className="h-3.5 w-3.5 text-slate-400" />
             Tipo de Comprobante
           </label>
@@ -67,8 +67,8 @@ export const SeccionConfiguracion: React.FC<PropiedadesSeccionConfiguracion> = (
         </div>
 
         {/* Divisa con re-escalado seguro */}
-        <div className="space-y-1">
-          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-700">
+        <div className="space-y-1.5">
+          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-700 whitespace-nowrap">
             <Coins className="h-3.5 w-3.5 text-slate-400" />
             Moneda
           </label>
@@ -85,9 +85,9 @@ export const SeccionConfiguracion: React.FC<PropiedadesSeccionConfiguracion> = (
           </select>
         </div>
 
-        {/* Plantilla */}
-        <div className="space-y-1">
-          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-700">
+        {/* Plantilla (Nombres limpios sin paréntesis) */}
+        <div className="space-y-1.5">
+          <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-700 whitespace-nowrap">
             <Palette className="h-3.5 w-3.5 text-slate-400" />
             Plantilla A4
           </label>
@@ -95,18 +95,18 @@ export const SeccionConfiguracion: React.FC<PropiedadesSeccionConfiguracion> = (
             className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium"
             {...register('configuracion.plantilla')}
           >
-            <option value="moderna">Moderna (B2B Tech)</option>
-            <option value="minimalista">Minimalista (Editorial)</option>
-            <option value="clasica">Clásica (Corporativa)</option>
+            <option value="moderna">Moderna</option>
+            <option value="minimalista">Minimalista</option>
+            <option value="clasica">Clásica</option>
           </select>
         </div>
 
         {/* Color Primario */}
-        <div className="space-y-1">
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
+        <div className="space-y-1.5">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 whitespace-nowrap">
             Color de Acento
           </label>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 h-[34px]">
             <input
               type="color"
               value={colorActual || '#2563EB'}
@@ -118,8 +118,8 @@ export const SeccionConfiguracion: React.FC<PropiedadesSeccionConfiguracion> = (
               className="h-8 w-10 cursor-pointer rounded border border-slate-300 bg-white p-0.5"
               title="Selector de color personalizado"
             />
-            <div className="flex gap-1">
-              {PALETAS_PREDEFINIDAS.slice(0, 4).map((p) => (
+            <div className="flex gap-1.5">
+              {PALETAS_PREDEFINIDAS.slice(0, 5).map((p) => (
                 <button
                   key={p.valor}
                   type="button"

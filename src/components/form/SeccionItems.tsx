@@ -82,11 +82,11 @@ export const SeccionItems: React.FC<PropiedadesSeccionItems> = ({ formulario }) 
               key={campo.id}
               className="rounded-lg border border-slate-200 bg-slate-50/60 p-4 transition-all hover:border-slate-300"
             >
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-12 md:items-start">
+              <div className="grid grid-cols-1 gap-2.5 md:grid-cols-[1fr_60px_115px_68px_68px_36px] md:items-end">
                 {/* Descripción */}
-                <div className="md:col-span-5 space-y-1">
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600">
-                    Descripción del Servicio / Producto
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 whitespace-nowrap">
+                    Descripción
                   </label>
                   <input
                     type="text"
@@ -102,15 +102,15 @@ export const SeccionItems: React.FC<PropiedadesSeccionItems> = ({ formulario }) 
                 </div>
 
                 {/* Cantidad */}
-                <div className="md:col-span-2 space-y-1">
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 whitespace-nowrap text-center">
                     Cant.
                   </label>
                   <input
                     type="number"
                     min="1"
                     step="1"
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-center font-mono"
                     {...register(`items.${indice}.cantidad` as const, {
                       valueAsNumber: true,
                     })}
@@ -118,8 +118,8 @@ export const SeccionItems: React.FC<PropiedadesSeccionItems> = ({ formulario }) 
                 </div>
 
                 {/* Precio Unitario */}
-                <div className="md:col-span-2 space-y-1">
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 whitespace-nowrap text-right">
                     Precio ({configDivisa.simbolo})
                   </label>
                   <Controller
@@ -142,15 +142,15 @@ export const SeccionItems: React.FC<PropiedadesSeccionItems> = ({ formulario }) 
                           );
                           field.onChange(nuevoValorCentavos);
                         }}
-                        className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                        className="w-full rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono text-right"
                       />
                     )}
                   />
                 </div>
 
                 {/* Impuesto (%) */}
-                <div className="md:col-span-1 space-y-1">
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 whitespace-nowrap text-center">
                     IVA %
                   </label>
                   <Controller
@@ -167,15 +167,15 @@ export const SeccionItems: React.FC<PropiedadesSeccionItems> = ({ formulario }) 
                           const porcentaje = parseFloat(e.target.value) || 0;
                           field.onChange(porcentajeABps(porcentaje));
                         }}
-                        className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                        className="w-full rounded-md border border-slate-300 bg-white px-1.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono text-center"
                       />
                     )}
                   />
                 </div>
 
                 {/* Descuento (%) */}
-                <div className="md:col-span-1 space-y-1">
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 whitespace-nowrap text-center">
                     Desc %
                   </label>
                   <Controller
@@ -192,21 +192,21 @@ export const SeccionItems: React.FC<PropiedadesSeccionItems> = ({ formulario }) 
                           const porcentaje = parseFloat(e.target.value) || 0;
                           field.onChange(porcentajeABps(porcentaje));
                         }}
-                        className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                        className="w-full rounded-md border border-slate-300 bg-white px-1.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono text-center"
                       />
                     )}
                   />
                 </div>
 
-                {/* Acciones & Total de línea */}
-                <div className="md:col-span-1 flex items-center justify-end pt-5">
+                {/* Acciones & Eliminar */}
+                <div className="flex items-center justify-center md:pb-0.5">
                   <Boton
                     type="button"
                     variante="fantasma"
                     tamano="icono"
                     onClick={() => remove(indice)}
                     disabled={fields.length <= 1}
-                    className="text-slate-400 hover:text-rose-600"
+                    className="h-9 w-9 text-slate-400 hover:text-rose-600 hover:bg-rose-50"
                     title={
                       fields.length <= 1
                         ? 'Debe existir al menos un ítem'

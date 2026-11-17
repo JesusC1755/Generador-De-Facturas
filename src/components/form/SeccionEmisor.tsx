@@ -114,7 +114,7 @@ export const SeccionEmisor: React.FC<PropiedadesSeccionEmisor> = ({ formulario }
               <span className="mt-1 text-xs font-medium text-slate-700">
                 Haz clic para cargar el logo
               </span>
-              <span className="text-[10px] text-slate-400">PNG, JPG, WebP o SVG (Local-First)</span>
+              <span className="text-[10px] text-slate-400">PNG, JPG, WebP o SVG</span>
             </label>
           </div>
         )}

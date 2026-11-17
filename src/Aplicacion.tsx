@@ -3,12 +3,7 @@ import { usarAlmacenFactura } from './store/usarAlmacenFactura';
 import { FormularioFactura } from './components/form/FormularioFactura';
 import { ContenedorA4 } from './components/preview/ContenedorA4';
 import { DatosFactura } from './types/factura';
-import {
-  FileText,
-  ShieldCheck,
-  Database,
-  Sparkles,
-} from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 export const Aplicacion: React.FC = () => {
   const facturaStore = usarAlmacenFactura((state) => state.factura);
@@ -30,33 +25,17 @@ export const Aplicacion: React.FC = () => {
             >
               <FileText className="h-5 w-5" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold tracking-tight text-slate-900">
-                  InvoiceCraft
-                </h1>
-                <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-slate-700 font-mono">
-                  {facturaActiva.configuracion.tipoDocumento}
-                </span>
-                <span className="rounded bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700 font-mono">
-                  Plantilla: {facturaActiva.configuracion.plantilla}
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500">
-                Generador B2B Local-First • Motor Financiero Estándar Stripe (Cero Flotantes)
-              </p>
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg font-bold tracking-tight text-slate-900">
+                InvoiceCraft
+              </h1>
+              <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-slate-700 font-mono">
+                {facturaActiva.configuracion.tipoDocumento}
+              </span>
+              <span className="rounded bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700 font-mono">
+                Plantilla: {facturaActiva.configuracion.plantilla}
+              </span>
             </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Precisión Financiera
-            </span>
-            <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-              <Database className="h-3.5 w-3.5" />
-              Local-First (LocalStorage)
-            </span>
           </div>
         </div>
       </header>
@@ -66,24 +45,20 @@ export const Aplicacion: React.FC = () => {
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-12 items-start">
           {/* PANEL IZQUIERDO: CONFIGURACIÓN Y FORMULARIO MODULAR (5 columnas) */}
           <div className="xl:col-span-5 space-y-6 no-imprimir">
-            <div className="flex items-center justify-between">
+            <div>
               <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
                 Panel de Configuración y Entrada
               </h2>
-              <span className="text-xs text-slate-400">Auto-guardado activo</span>
             </div>
             <FormularioFactura alCambiarValoresEnVivo={setFacturaEnVivo} />
           </div>
 
-          {/* PANEL DERECHO: LIENZO DE RENDERIZADO A4 EN VIVO (7 columnas) */}
+          {/* PANEL DERECHO: VISTA PREVIA A4 (7 columnas) */}
           <div className="xl:col-span-7 xl:sticky xl:top-20 space-y-4">
             <div className="flex items-center justify-between no-imprimir">
-              <div className="flex items-center gap-1.5">
-                <Sparkles className="h-4 w-4 text-blue-600" />
-                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700">
-                  Lienzo de Renderizado A4 en Vivo
-                </h2>
-              </div>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
+                Vista Previa
+              </h2>
               <span className="text-xs text-slate-500 font-mono">
                 {facturaActiva.configuracion.divisa} • 210mm × 297mm
               </span>

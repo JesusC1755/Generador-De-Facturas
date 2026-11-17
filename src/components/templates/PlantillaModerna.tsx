@@ -277,7 +277,7 @@ export const PlantillaModerna: React.FC<PropiedadesPlantillaModerna> = ({
           )}
         </div>
         <div className="text-right font-mono text-[10px]">
-          Generado con InvoiceCraft • Estándar Stripe
+          Generado con InvoiceCraft
         </div>
       </div>
     </div>

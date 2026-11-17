@@ -161,7 +161,7 @@ export const FormularioFactura: React.FC<PropiedadesFormularioFactura> = ({
               className="h-8 rounded-lg border border-blue-200 bg-blue-50/50 px-2.5 text-xs font-semibold text-blue-700 shadow-sm transition-colors hover:bg-blue-100 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
             >
               <option value="" disabled>
-                ⚡ Cargar Datos de Prueba (Mock)...
+                ⚡ Cargar Ejemplo...
               </option>
               <option value="saas">SaaS Cloud B2B (USD • Moderna)</option>
               <option value="colombia">Factura Comercial (COP • Clásica)</option>

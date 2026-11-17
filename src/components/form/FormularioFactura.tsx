@@ -123,11 +123,11 @@ export const FormularioFactura: React.FC<PropiedadesFormularioFactura> = ({
   };
 
   const manejarRestablecer = () => {
-    if (window.confirm('¿Seguro que deseas restablecer el borrador a los valores iniciales?')) {
+    if (window.confirm('¿Deseas vaciar el borrador para iniciar una nueva factura desde cero?')) {
       restablecerFacturaStore();
       setMensajeEstado({
         tipo: 'exito',
-        texto: 'Se ha restablecido el comprobante al estado inicial.',
+        texto: 'Se ha limpiado el comprobante para iniciar un nuevo documento.',
       });
       setTimeout(() => setMensajeEstado(null), 3000);
     }
@@ -206,10 +206,10 @@ export const FormularioFactura: React.FC<PropiedadesFormularioFactura> = ({
           tamano="sm"
           onClick={manejarRestablecer}
           className="text-slate-500 hover:text-slate-800"
-          title="Restablecer todos los campos al borrador por defecto"
+          title="Limpiar campos para iniciar un nuevo documento en blanco"
         >
           <RotateCcw className="h-3.5 w-3.5" />
-          Restablecer
+          Limpiar / Nuevo
         </Boton>
       </div>
 

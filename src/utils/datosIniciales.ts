@@ -31,62 +31,61 @@ export function obtenerFechaVencimientoIso(diasPlazo: number = 30): string {
 }
 
 /**
- * Estado por defecto de una factura nueva.
- * Todos los montos se encuentran expresados en unidades mínimas enteras.
+ * Función constructora para generar un estado inicial limpio (Lienzo en blanco / Blank Canvas).
+ * Inicia vacía para que el usuario ingrese sus datos directamente sin fricción,
+ * permitiendo cargar datos de prueba solo cuando él lo elija.
  */
-export const FACTURA_INICIAL: DatosFactura = {
-  id: generarIdUnico(),
-  configuracion: {
-    tipoDocumento: 'factura',
-    plantilla: 'moderna',
-    colorPrimario: '#2563EB', // Azul corporativo elegante
-    divisa: 'USD',
-  },
-  emisor: {
-    nombre: 'Acme Software Solutions S.A.',
-    identificacionFiscal: 'NIT 900.123.456-7',
-    correo: 'facturacion@acmesolutions.io',
-    telefono: '+1 (555) 234-5678',
-    direccion: 'Avenida Tecnológica 1024, Edificio Quantum Piso 5',
-    ciudad: 'San Francisco, CA',
-    pais: 'Estados Unidos',
-    logoUrl: undefined,
-  },
-  receptor: {
-    nombre: 'Global Logistics Partners Inc.',
-    identificacionFiscal: 'EIN 12-3456789',
-    correo: 'cuentasporpagar@globallogistics.com',
-    telefono: '+1 (555) 987-6543',
-    direccion: 'Boulevard Industrial 405, Suite 12B',
-    ciudad: 'Austin, TX',
-    pais: 'Estados Unidos',
-  },
-  items: [
-    {
-      id: generarIdUnico(),
-      descripcion: 'Desarrollo de Arquitectura Cloud y Microservicios (Mes 1)',
-      cantidad: 1,
-      montoUnitario: 350000, // $3,500.00 USD
-      tasaImpuestoBps: 1900, // 19% IVA
-      tasaDescuentoBps: 500, // 5% Descuento especial
+export function crearFacturaInicial(): DatosFactura {
+  return {
+    id: generarIdUnico(),
+    configuracion: {
+      tipoDocumento: 'factura',
+      plantilla: 'moderna',
+      colorPrimario: '#2563EB',
+      divisa: 'USD',
     },
-    {
-      id: generarIdUnico(),
-      descripcion: 'Soporte y Monitoreo de Infraestructura 24/7 (Sprint)',
-      cantidad: 2,
-      montoUnitario: 75000, // $750.00 USD
-      tasaImpuestoBps: 1900, // 19% IVA
-      tasaDescuentoBps: 0,
+    emisor: {
+      nombre: '',
+      identificacionFiscal: '',
+      correo: '',
+      telefono: '',
+      direccion: '',
+      ciudad: '',
+      pais: '',
+      logoUrl: undefined,
     },
-  ],
-  pago: {
-    numeroDocumento: 'FAC-2026-001',
-    fechaEmision: obtenerFechaActualIso(),
-    fechaVencimiento: obtenerFechaVencimientoIso(30),
-    metodoPago: 'Transferencia Bancaria (Wire / ACH)',
-    cuentaBancaria: 'Bank of America - Routing: 026009593 - Cta: 4830 1928 3749',
-    notas: 'Agradecemos su preferencia. Por favor incluir el número de comprobante en la referencia del pago.',
-    terminosCondiciones: 'El pago debe realizarse dentro de los 30 días posteriores a la fecha de emisión. Interés moratorio del 1.5% mensual.',
-  },
-};
+    receptor: {
+      nombre: '',
+      identificacionFiscal: '',
+      correo: '',
+      telefono: '',
+      direccion: '',
+      ciudad: '',
+      pais: '',
+    },
+    items: [
+      {
+        id: generarIdUnico(),
+        descripcion: '',
+        cantidad: 1,
+        montoUnitario: 0,
+        tasaImpuestoBps: 0,
+        tasaDescuentoBps: 0,
+      },
+    ],
+    pago: {
+      numeroDocumento: '001',
+      fechaEmision: obtenerFechaActualIso(),
+      fechaVencimiento: obtenerFechaVencimientoIso(30),
+      metodoPago: 'Transferencia bancaria',
+      cuentaBancaria: '',
+      notas: '',
+      terminosCondiciones: '',
+    },
+  };
+}
 
+/**
+ * Instancia inicial constante por defecto.
+ */
+export const FACTURA_INICIAL: DatosFactura = crearFacturaInicial();

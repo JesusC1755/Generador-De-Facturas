@@ -9,7 +9,11 @@ import {
   esquemaFactura,
   ItemFactura,
 } from '../types/factura';
-import { FACTURA_INICIAL, generarIdUnico } from '../utils/datosIniciales';
+import {
+  FACTURA_INICIAL,
+  crearFacturaInicial,
+  generarIdUnico,
+} from '../utils/datosIniciales';
 
 interface EstadoAlmacenFactura {
   factura: DatosFactura;
@@ -144,7 +148,7 @@ export const usarAlmacenFactura = create<EstadoAlmacenFactura>()(
 
       restablecerFactura: (datos) => {
         set({
-          factura: datos ? { ...datos, id: generarIdUnico() } : { ...FACTURA_INICIAL, id: generarIdUnico() },
+          factura: datos ? { ...datos, id: generarIdUnico() } : crearFacturaInicial(),
         });
       },
 

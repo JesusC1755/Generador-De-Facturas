@@ -8,7 +8,7 @@ import { CodigoDivisa } from './divisa';
  */
 export const esquemaItemFactura = z.object({
   id: z.string().uuid(),
-  descripcion: z.string().min(1, 'La descripción es obligatoria'),
+  descripcion: z.string().default(''),
   cantidad: z.number().int().positive('La cantidad debe ser un entero positivo'),
   /**
    * Monto en unidad mínima (ej. 1550 para $15.50 USD o 1550 para $1550 COP).
@@ -30,15 +30,15 @@ export type ItemFactura = z.infer<typeof esquemaItemFactura>;
  * Entidad Emisor (quien genera la factura/cotización).
  */
 export const esquemaEmisor = z.object({
-  nombre: z.string().min(1, 'El nombre o razón social es obligatorio'),
-  identificacionFiscal: z.string().min(1, 'El NIT/CIF/RFC es obligatorio'),
+  nombre: z.string().default(''),
+  identificacionFiscal: z.string().default(''),
   correo: z.string().email('Correo electrónico inválido').or(z.literal('')),
   telefono: z.string().default(''),
   direccion: z.string().default(''),
   ciudad: z.string().default(''),
   pais: z.string().default(''),
   /**
-   * Data URL en formato Base64 (máx 800 KB verificado en cliente).
+   * Data URL en formato Base64 (máx 1.5 MB verificado en cliente).
    */
   logoUrl: z.string().optional(),
 });
@@ -49,8 +49,8 @@ export type DatosEmisor = z.infer<typeof esquemaEmisor>;
  * Entidad Receptor (cliente final o empresa destinataria).
  */
 export const esquemaReceptor = z.object({
-  nombre: z.string().min(1, 'El nombre del cliente es obligatorio'),
-  identificacionFiscal: z.string().min(1, 'El documento o ID fiscal es obligatorio'),
+  nombre: z.string().default(''),
+  identificacionFiscal: z.string().default(''),
   correo: z.string().email('Correo electrónico inválido').or(z.literal('')),
   telefono: z.string().default(''),
   direccion: z.string().default(''),
@@ -79,7 +79,7 @@ export type ConfiguracionFactura = z.infer<typeof esquemaConfiguracion>;
  * Términos de pago y metadatos del comprobante.
  */
 export const esquemaPago = z.object({
-  numeroDocumento: z.string().min(1, 'El número de comprobante es obligatorio'),
+  numeroDocumento: z.string().default('001'),
   fechaEmision: z.string(), // ISO YYYY-MM-DD
   fechaVencimiento: z.string(), // ISO YYYY-MM-DD
   metodoPago: z.string().default('Transferencia bancaria'),

@@ -23,7 +23,7 @@ La generación de facturas y cotizaciones directamente en el navegador suele enf
 4. **Privacidad y Arquitectura Local-First:**
    - La información comercial y los logos corporativos se procesan y conservan localmente en el navegador (`localStorage` y Web API `FileReader`), permitiendo trabajar sin conexión y sin enviar datos fiscales a servidores de terceros.
 5. **Rendimiento y Control de Recursos:**
-   - Se implementa un límite preventivo en la subida de logos (< 800 KB) para evitar desbordar la cuota de ~5MB de `localStorage`, junto con un debounce en la persistencia para mantener la interfaz a 60 FPS sin saturar el hilo principal.
+   - Se implementa un límite preventivo en la subida de logos (hasta 1.5 MB) para proteger el almacenamiento local contra desbordamientos de cuota, junto con un debounce de 350 ms en la persistencia para mantener la interfaz a 60 FPS sin saturar el hilo principal.
 
 ---
 
@@ -70,6 +70,8 @@ Generador-De-Facturas/
 │   │   └── ui/                   # Primitivas de interfaz accesibles
 │   │       ├── AreaTexto.tsx
 │   │       ├── Boton.tsx
+│   │       ├── EntradaAutocompletado.tsx # Selector inteligente con búsqueda diacrítica
+│   │       ├── EntradaTelefono.tsx       # Selector telefónico internacional con prefijos
 │   │       └── EntradaTexto.tsx
 │   ├── hooks/
 │   │   └── usarCalculosFactura.ts # Hook contable puramente derivado
@@ -81,16 +83,19 @@ Generador-De-Facturas/
 │   │   ├── divisa.ts              # Diccionario de monedas y factores
 │   │   └── factura.ts             # Esquemas Zod e interfaces en español
 │   ├── utils/
-│   │   ├── archivo.ts             # FileReader, Blob JSON y gestión de cuota
+│   │   ├── archivo.ts             # FileReader, Blob JSON y gestión de cuota (1.5 MB)
 │   │   ├── conversionDivisa.ts    # Re-escalado seguro USD <-> COP
-│   │   ├── datosIniciales.ts      # Estado base por defecto
+│   │   ├── datosIniciales.ts      # Estado base por defecto (Lienzo en blanco)
 │   │   ├── datosPrueba.ts         # Facturas de ejemplo listas para cargar
-│   │   └── moneda.ts              # Motor contable de precisión Stripe
+│   │   ├── moneda.ts              # Motor contable de precisión Stripe
+│   │   └── paises.ts              # Dataset ligero de países, códigos y ciudades (~25 KB)
 │   ├── Aplicacion.tsx             # Workspace Split-Screen orquestador
 │   └── principal.tsx              # Punto de entrada de la aplicación
 ├── index.html
 ├── package.json
-└── vite.config.ts
+├── pnpm-workspace.yaml            # Configuración para compatibilidad CI/CD
+├── vite.config.ts
+└── wrangler.json                  # Configuración de despliegue Cloudflare Workers
 ```
 
 ---
@@ -137,13 +142,31 @@ pnpm test:precision
 ```bash
 pnpm build
 ```
-Genera los artefactos optimizados en la carpeta `dist/`, listos para desplegar en **Vercel**, **Netlify** o **Cloudflare Pages** sin costo ni backend.
+Genera los artefactos optimizados en la carpeta `dist/`.
+
+### Despliegue en la Nube (Cloudflare)
+El proyecto está configurado para despliegue automatizado en la red global de Cloudflare mediante la arquitectura de **Workers Static Assets**:
+```bash
+# Despliegue directo por línea de comandos
+npx wrangler deploy
+```
+* **Instancia en producción:** [https://generador-de-facturas.jc-solutions.workers.dev](https://generador-de-facturas.jc-solutions.workers.dev)
 
 ### Actualización del Grafo de Conocimiento (Graphify)
 ```bash
 ./scripts/graphify.sh
 ```
 Indexa el AST completo del código fuente en `graphify-out/` y actualiza el visor interactivo `graphify-out/graph.html`.
+
+---
+
+## 💡 Características Clave de Experiencia de Usuario (UX)
+
+* **Lienzo en Blanco por Defecto:** Inicio limpio sin datos residuales, con botón para limpiar o iniciar nuevos borradores en un clic.
+* **Selectores Inteligentes de Ubicación:** Entrada con autocompletado y normalización de acentos para países y ciudades con un dataset ligero local (~25 KB).
+* **Marcación Telefónica Internacional:** Selector desplegable de prefijo de país con banderas para evitar digitar códigos manualmente.
+* **Portabilidad de Datos:** Exportación e importación en formato `.json` mediante descarga de blobs en el navegador.
+* **Previsualización Reactiva y Zoom:** Control de zoom visual proporcional al tamaño físico de una hoja A4 (210mm × 297mm).
 
 ---
 

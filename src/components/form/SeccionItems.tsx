@@ -12,6 +12,7 @@ import {
 } from '../../utils/moneda';
 import { generarIdUnico } from '../../utils/datosIniciales';
 import { Boton } from '../ui/Boton';
+import { EntradaNumerica } from '../ui/EntradaNumerica';
 import { Plus, Trash2, ListOrdered } from 'lucide-react';
 
 interface PropiedadesSeccionItems {
@@ -106,14 +107,26 @@ export const SeccionItems: React.FC<PropiedadesSeccionItems> = ({ formulario }) 
                   <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 whitespace-nowrap text-center">
                     Cant.
                   </label>
-                  <input
-                    type="number"
-                    min="1"
-                    step="1"
-                    className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-center font-mono"
-                    {...register(`items.${indice}.cantidad` as const, {
-                      valueAsNumber: true,
-                    })}
+                  <Controller
+                    control={control}
+                    name={`items.${indice}.cantidad` as const}
+                    render={({ field }) => (
+                      <EntradaNumerica
+                        valorNumerico={field.value}
+                        valorFormateado={String(field.value ?? 1)}
+                        permitirDecimales={false}
+                        minimo={1}
+                        placeholder="1"
+                        ariaLabel="Cantidad"
+                        alCambiarNumero={(valor) => {
+                          if (valor !== null && valor >= 1) {
+                            field.onChange(valor);
+                          }
+                        }}
+                        alConfirmarInvalido={() => field.onChange(1)}
+                        className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-center font-mono"
+                      />
+                    )}
                   />
                 </div>
 
@@ -126,22 +139,31 @@ export const SeccionItems: React.FC<PropiedadesSeccionItems> = ({ formulario }) 
                     control={control}
                     name={`items.${indice}.montoUnitario` as const}
                     render={({ field }) => (
-                      <input
-                        type="number"
-                        min="0"
-                        step={configDivisa.decimales > 0 ? '0.01' : '1'}
-                        value={convertirDesdeCentavos(
+                      <EntradaNumerica
+                        valorNumerico={field.value / configDivisa.factorUnidadMinima}
+                        valorFormateado={convertirDesdeCentavos(
                           field.value,
                           configDivisa.factorUnidadMinima,
                           configDivisa.decimales
                         )}
-                        onChange={(e) => {
+                        permitirDecimales={configDivisa.decimales > 0}
+                        maxDecimales={configDivisa.decimales}
+                        minimo={0}
+                        limpiarCeroAlEnfocar
+                        placeholder={convertirDesdeCentavos(
+                          0,
+                          configDivisa.factorUnidadMinima,
+                          configDivisa.decimales
+                        )}
+                        ariaLabel="Precio unitario"
+                        alCambiarNumero={(valor) => {
                           const nuevoValorCentavos = convertirACentavos(
-                            e.target.value,
+                            valor ?? 0,
                             configDivisa.factorUnidadMinima
                           );
                           field.onChange(nuevoValorCentavos);
                         }}
+                        alConfirmarInvalido={() => field.onChange(0)}
                         className="w-full rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono text-right"
                       />
                     )}
@@ -156,20 +178,27 @@ export const SeccionItems: React.FC<PropiedadesSeccionItems> = ({ formulario }) 
                   <Controller
                     control={control}
                     name={`items.${indice}.tasaImpuestoBps` as const}
-                    render={({ field }) => (
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="1"
-                        value={bpsAPorcentaje(field.value)}
-                        onChange={(e) => {
-                          const porcentaje = parseFloat(e.target.value) || 0;
-                          field.onChange(porcentajeABps(porcentaje));
-                        }}
-                        className="w-full rounded-md border border-slate-300 bg-white px-1.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono text-center"
-                      />
-                    )}
+                    render={({ field }) => {
+                      const porcentajeActual = bpsAPorcentaje(field.value);
+                      return (
+                        <EntradaNumerica
+                          valorNumerico={porcentajeActual}
+                          valorFormateado={String(porcentajeActual)}
+                          permitirDecimales
+                          maxDecimales={2}
+                          minimo={0}
+                          maximo={100}
+                          limpiarCeroAlEnfocar
+                          placeholder="0"
+                          ariaLabel="Porcentaje de IVA"
+                          alCambiarNumero={(valor) => {
+                            field.onChange(porcentajeABps(valor ?? 0));
+                          }}
+                          alConfirmarInvalido={() => field.onChange(0)}
+                          className="w-full rounded-md border border-slate-300 bg-white px-1.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono text-center"
+                        />
+                      );
+                    }}
                   />
                 </div>
 
@@ -181,20 +210,27 @@ export const SeccionItems: React.FC<PropiedadesSeccionItems> = ({ formulario }) 
                   <Controller
                     control={control}
                     name={`items.${indice}.tasaDescuentoBps` as const}
-                    render={({ field }) => (
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="1"
-                        value={bpsAPorcentaje(field.value)}
-                        onChange={(e) => {
-                          const porcentaje = parseFloat(e.target.value) || 0;
-                          field.onChange(porcentajeABps(porcentaje));
-                        }}
-                        className="w-full rounded-md border border-slate-300 bg-white px-1.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono text-center"
-                      />
-                    )}
+                    render={({ field }) => {
+                      const porcentajeActual = bpsAPorcentaje(field.value);
+                      return (
+                        <EntradaNumerica
+                          valorNumerico={porcentajeActual}
+                          valorFormateado={String(porcentajeActual)}
+                          permitirDecimales
+                          maxDecimales={2}
+                          minimo={0}
+                          maximo={100}
+                          limpiarCeroAlEnfocar
+                          placeholder="0"
+                          ariaLabel="Porcentaje de descuento"
+                          alCambiarNumero={(valor) => {
+                            field.onChange(porcentajeABps(valor ?? 0));
+                          }}
+                          alConfirmarInvalido={() => field.onChange(0)}
+                          className="w-full rounded-md border border-slate-300 bg-white px-1.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono text-center"
+                        />
+                      );
+                    }}
                   />
                 </div>
 

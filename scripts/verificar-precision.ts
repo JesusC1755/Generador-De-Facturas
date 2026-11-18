@@ -1,6 +1,7 @@
 import {
   convertirACentavos,
   convertirDesdeCentavos,
+  porcentajeABps,
   calcularTotalesFactura,
   formatearMoneda,
 } from '../src/utils/moneda';
@@ -9,10 +10,10 @@ import { ItemFactura } from '../src/types/factura';
 
 function asegurar(condicion: boolean, mensaje: string) {
   if (!condicion) {
-    console.error(`❌ FALLÓ: ${mensaje}`);
+    console.error(` FALLÓ: ${mensaje}`);
     process.exit(1);
   }
-  console.log(`✅ PASÓ: ${mensaje}`);
+  console.log(`PASÓ: ${mensaje}`);
 }
 
 console.log('--- TEST 1: Precisión IEEE 754 en Conversión ---');
@@ -84,4 +85,11 @@ asegurar(itemsCop[0]?.montoUnitario === 50, 'Al pasar $50.00 USD a COP debe resu
 const itemsVueltaUsd = reajustarMontosPorCambioDivisa(itemsCop, 'COP', 'USD');
 asegurar(itemsVueltaUsd[0]?.montoUnitario === 5000, 'Al regresar de 50 COP a USD debe volver a 5000 centavos');
 
-console.log('\n✨ ¡TODAS LAS PRUEBAS DE PRECISIÓN FINANCIERA PASARON CON ÉXITO! ✨');
+console.log('\n--- TEST 6: Blindaje contra Valores Negativos y Tasas Fuera de Rango ---');
+asegurar(convertirACentavos('-2500.00', 100) === 0, 'Un precio negativo en cadena debe normalizarse a 0 centavos');
+asegurar(convertirACentavos(-50, 100) === 0, 'Un precio negativo numérico debe normalizarse a 0 centavos');
+asegurar(porcentajeABps(-15) === 0, 'Un porcentaje negativo debe normalizarse a 0 bps');
+asegurar(porcentajeABps(150) === 10000, 'Un porcentaje mayor a 100% debe acotarse a 10000 bps');
+asegurar(porcentajeABps(8.25) === 825, 'Un porcentaje decimal 8.25% debe convertirse exactamente a 825 bps');
+
+console.log('\n ¡TODAS LAS PRUEBAS DE PRECISIÓN FINANCIERA PASARON CON ÉXITO! ');

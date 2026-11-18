@@ -30,7 +30,7 @@ export function convertirACentavos(
   factorUnidadMinima: number = 100
 ): number {
   if (typeof valor === 'number') {
-    if (isNaN(valor)) return 0;
+    if (!Number.isFinite(valor) || valor <= 0) return 0;
     return Math.round(valor * factorUnidadMinima);
   }
 
@@ -38,9 +38,9 @@ export function convertirACentavos(
   if (!cadenaLimpia) return 0;
 
   const flotante = parseFloat(cadenaLimpia);
-  if (isNaN(flotante)) return 0;
+  if (!Number.isFinite(flotante) || flotante <= 0) return 0;
 
-  // Multiplicación con redondeo exacto al entero más próximo
+  // Multiplicación con redondeo exacto al entero más próximo (nunca negativo)
   return Math.round(flotante * factorUnidadMinima);
 }
 
@@ -57,7 +57,9 @@ export function convertirDesdeCentavos(
   factorUnidadMinima: number = 100,
   decimales: number = 2
 ): string {
-  if (isNaN(centavos)) return '0';
+  if (!Number.isFinite(centavos) || centavos <= 0) {
+    return (0).toFixed(decimales);
+  }
   const valorMayor = centavos / factorUnidadMinima;
   return valorMayor.toFixed(decimales);
 }
@@ -67,15 +69,18 @@ export function convertirDesdeCentavos(
  * Ej: 1900 bps -> 19%, 550 bps -> 5.5%
  */
 export function bpsAPorcentaje(bps: number): number {
+  if (!Number.isFinite(bps) || bps <= 0) return 0;
   return bps / 100;
 }
 
 /**
- * Convierte un porcentaje a puntos básicos enteros.
+ * Convierte un porcentaje a puntos básicos enteros, acotado al rango válido [0%, 100%].
  * Ej: 19 -> 1900 bps, 5.5 -> 550 bps
  */
 export function porcentajeABps(porcentaje: number): number {
-  return Math.round(porcentaje * 100);
+  if (!Number.isFinite(porcentaje) || porcentaje <= 0) return 0;
+  const acotado = Math.min(100, porcentaje);
+  return Math.round(acotado * 100);
 }
 
 /**
@@ -100,7 +105,9 @@ export function calcularImpuestoItem(baseGravable: number, tasaImpuestoBps: numb
  * Calcula determinísticamente los valores financieros de un solo ítem.
  */
 export function calcularItemIndividual(item: ItemFactura): ItemFacturaCalculado {
-  const subtotalBruto = Math.round(item.cantidad * item.montoUnitario);
+  const cantidadSegura = Number.isFinite(item.cantidad) ? Math.max(0, item.cantidad) : 0;
+  const montoSeguro = Number.isFinite(item.montoUnitario) ? Math.max(0, item.montoUnitario) : 0;
+  const subtotalBruto = Math.round(cantidadSegura * montoSeguro);
   const montoDescuento = calcularDescuentoItem(subtotalBruto, item.tasaDescuentoBps);
   const baseGravable = Math.max(0, subtotalBruto - montoDescuento);
   const montoImpuesto = calcularImpuestoItem(baseGravable, item.tasaImpuestoBps);

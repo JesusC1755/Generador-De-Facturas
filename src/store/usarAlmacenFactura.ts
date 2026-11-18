@@ -17,6 +17,12 @@ import {
 
 interface EstadoAlmacenFactura {
   factura: DatosFactura;
+  /**
+   * Contador no persistido que solo se incrementa en reemplazos externos
+   * (Cargar Ejemplo, Importar JSON, Limpiar/Nuevo) para sincronizar el formulario
+   * sin disparar reset() durante el auto-guardado en vivo.
+   */
+  versionExterna: number;
 
   // Acciones granulares
   actualizarFactura: (parcial: Partial<DatosFactura>) => void;
@@ -41,6 +47,7 @@ export const usarAlmacenFactura = create<EstadoAlmacenFactura>()(
   persist(
     (set, get) => ({
       factura: FACTURA_INICIAL,
+      versionExterna: 0,
 
       actualizarFactura: (parcial) => {
         set((state) => ({
@@ -147,9 +154,16 @@ export const usarAlmacenFactura = create<EstadoAlmacenFactura>()(
       },
 
       restablecerFactura: (datos) => {
-        set({
-          factura: datos ? { ...datos, id: generarIdUnico() } : crearFacturaInicial(),
-        });
+        set((state) => ({
+          factura: datos
+            ? {
+                ...datos,
+                id: generarIdUnico(),
+                items: datos.items.map((item) => ({ ...item })),
+              }
+            : crearFacturaInicial(),
+          versionExterna: state.versionExterna + 1,
+        }));
       },
 
       cargarDesdeJson: (jsonString: string) => {
@@ -167,7 +181,10 @@ export const usarAlmacenFactura = create<EstadoAlmacenFactura>()(
             };
           }
 
-          set({ factura: validacion.data });
+          set((state) => ({
+            factura: validacion.data,
+            versionExterna: state.versionExterna + 1,
+          }));
           return { exito: true };
         } catch (error) {
           return {

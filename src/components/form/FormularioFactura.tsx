@@ -27,7 +27,7 @@ interface PropiedadesFormularioFactura {
 export const FormularioFactura: React.FC<PropiedadesFormularioFactura> = ({
   alCambiarValoresEnVivo,
 }) => {
-  const facturaAlmacen = usarAlmacenFactura((state) => state.factura);
+  const versionExterna = usarAlmacenFactura((state) => state.versionExterna);
   const actualizarFacturaStore = usarAlmacenFactura((state) => state.actualizarFactura);
   const restablecerFacturaStore = usarAlmacenFactura((state) => state.restablecerFactura);
   const cargarDesdeJsonStore = usarAlmacenFactura((state) => state.cargarDesdeJson);
@@ -39,19 +39,35 @@ export const FormularioFactura: React.FC<PropiedadesFormularioFactura> = ({
 
   const inputImportarJsonRef = useRef<HTMLInputElement>(null);
   const temporizadorDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  const ultimaVersionSincronizadaRef = useRef<number>(versionExterna);
 
   const formulario = useForm<DatosFactura>({
     resolver: zodResolver(esquemaFactura),
-    defaultValues: facturaAlmacen,
+    defaultValues: usarAlmacenFactura.getState().factura,
     mode: 'onChange',
   });
 
   const { watch, reset } = formulario;
 
-  // Sincronizar si el store cambia externamente (ej: al cargar JSON o ejemplo)
+  // Sincronizar únicamente cuando el store cambia por una acción externa (Cargar Ejemplo, Importar JSON o Limpiar).
+  // Evita llamar a reset() durante el auto-guardado y previene el desmontaje/pérdida de foco en las filas de ítems.
   useEffect(() => {
-    reset(facturaAlmacen);
-  }, [facturaAlmacen, reset]);
+    if (versionExterna === ultimaVersionSincronizadaRef.current) {
+      return;
+    }
+    ultimaVersionSincronizadaRef.current = versionExterna;
+
+    if (temporizadorDebounceRef.current) {
+      clearTimeout(temporizadorDebounceRef.current);
+      temporizadorDebounceRef.current = null;
+    }
+
+    const facturaActual = usarAlmacenFactura.getState().factura;
+    reset(facturaActual);
+    if (alCambiarValoresEnVivo) {
+      alCambiarValoresEnVivo(facturaActual);
+    }
+  }, [versionExterna, reset, alCambiarValoresEnVivo]);
 
   // Anti-Thrashing: Sincronización reactiva con debounce de 350ms hacia Zustand/LocalStorage
   useEffect(() => {
